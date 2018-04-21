@@ -177,10 +177,14 @@ function getDocumentURL(name) {
 
 function getBytesInUse(key) {
     return new Promise(resolve => {
-        chrome.storage.sync.getBytesInUse(key, resp => {
-            console.log(resp);
-            resolve(resp);
-        });
+        if (typeof chrome.storage.sync.getBytesInUse === 'function') {
+            chrome.storage.sync.getBytesInUse(key, resp => {
+                console.log(resp);
+                resolve(resp);
+            });
+        } else {
+            resolve(0);
+        }
     });
 }
 

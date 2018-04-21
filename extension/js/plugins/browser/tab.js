@@ -18,36 +18,19 @@ const keys = [
     { key: 'tabp', allowBatch: true }
 ];
 const type = 'keyword';
-const icon = chrome.extension.getURL('img/tab.png');
-const title = chrome.i18n.getMessage(`${name}_title`);
+const icon = browser.extension.getURL('img/tab.png');
+const title = browser.i18n.getMessage(`${name}_title`);
 const commands = util.genCommands(name, icon, keys, type);
 
-function getTabsByWindows(query, win) {
-    return new Promise(resolve => {
-        chrome.tabs.getAllInWindow(win.id, function (tabs) {
-            const tabList = tabs.filter(function (tab) {
-                return util.matchText(query, `${tab.title}${tab.url}`);
-            });
-
-            resolve(tabList);
+function getAllTabs(query) {
+    return browser.tabs.query({
+        currentWindow: true
+    }).then(tabs => {
+        const tabList = tabs.filter(function (tab) {
+            return util.matchText(query, `${tab.title}${tab.url}`);
         });
-    });
-}
 
-function getAllTabs(query, callback) {
-    chrome.windows.getAll(function (wins) {
-        if (!wins.length) {
-            return;
-        }
-        const tasks = [];
-
-        for (let i = 0, len = wins.length; i < len; i = i + 1) {
-            tasks.push(getTabsByWindows(query, wins[i]));
-        }
-
-        Promise.all(tasks).then(resp => {
-            callback(_.flatten(resp));
-        });
+        return tabList;
     });
 }
 
@@ -79,7 +62,7 @@ function dataFormat(rawList, command) {
         return {
             key: command.key,
             id: item.id,
-            icon: item.favIconUrl || chrome.extension.getURL('img/icon.png'),
+            icon: item.favIconUrl || browser.extension.getURL('img/icon.png'),
             title: tabTitle,
             desc,
             isWarn: item.active,
@@ -90,7 +73,7 @@ function dataFormat(rawList, command) {
 
 function queryTabs(query, command) {
     return new Promise(resolve => {
-        getAllTabs(query, function (data) {
+        getAllTabs(query).then(data => {
             resolve(dataFormat(data, command));
         });
     });
@@ -106,7 +89,7 @@ function onInput(query, command) {
 
 function removeTabs(ids) {
     return new Promise(resolve => {
-        chrome.tabs.remove(ids, () => {
+        browser.tabs.remove(ids, () => {
             resolve(true);
         });
     });
@@ -117,13 +100,13 @@ function moveTab(tabId, query) {
 
     if (index >= -1) {
         return new Promise(resolve => {
-            chrome.tabs.move(tabId, { index }, resp => {
+            browser.tabs.move(tabId, { index }, resp => {
                 console.log(resp);
                 resolve('');
             });
         });
     } else {
-        Toast.warning(chrome.i18n.getMessage('tab_warning_invalidindex'));
+        Toast.warning(browser.i18n.getMessage('tab_warning_invalidindex'));
         return Promise.resolve();
     }
 }

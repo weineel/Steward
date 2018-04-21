@@ -4,8 +4,9 @@ import './content.scss'
 import { websitesMap } from '../../js/plugins/website'
 import PluginHelper from '../../js/helper/pluginHelper'
 import { checkAutoMatchingSites } from '../../js/helper/websites'
+import browser from 'webextension-polyfill'
 
-const chrome = window.chrome;
+const chrome = browser;
 const pluginHelper = new PluginHelper();
 const autoMatchingSites = checkAutoMatchingSites(selector => {
     return Boolean($(selector).length);
@@ -20,7 +21,7 @@ const App = {
         const popupurl = chrome.extension.getURL('popup.html');
         const html = `
             <div id="steward-main" class="steward-main">
-                <iframe style="display:none;" id="steward-iframe" src="${popupurl}" name="steward-box" width="530" height="480" frameborder="0"></iframe>
+                <iframe mozbrowser style="display:none;" id="steward-iframe" src="${popupurl}" name="steward-box" width="530" height="480" frameborder="0"></iframe>
             </div>
         `;
 
