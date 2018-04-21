@@ -40,6 +40,25 @@
     - Windows and Linux: <kbd>Ctrl</kbd> + <kbd>J</kbd>
 - Alternatively, in Google Chrome, you can go to the URL `chrome://extensions` and scroll to the bottom and click **Keyboard shortcuts**
 
+#### Development
+To run the extension locally, you'll need to build it with:
+
+```shell
+# init project
+# node >= v7.5
+npm install
+```
+
+```shell
+# Build every time a file changes
+npm run dev
+```
+
+```shell
+# Build for production
+npm run prod
+```
+
 #### Sponsor:
 
 <div style="display: flex;justify-content: space-around;">

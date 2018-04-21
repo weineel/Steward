@@ -1,18 +1,19 @@
 #!/bin/sh
 
+# only work on MacOS
 # prepare
-echo "准备目录......"
+echo "prepare......"
 rm -fr output
 mkdir -p output
 
 # build
-echo "编译中....."
-npm run build:minified || { echo "编译失败，请检查后重试"; exit 1; }
+echo "building....."
+npm run build:minified || { echo "failed to build，please check and rebuild"; exit 1; }
 
 zip -r steward.zip output/steward/
 
-echo "打包完毕"
+echo "done package"
 
 mv -f steward.zip ~/Desktop
 
-echo "移动到桌面"
+echo "move to desktop"
