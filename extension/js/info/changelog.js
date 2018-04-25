@@ -1,5 +1,11 @@
 const langZh = [
     {
+        version: 'v3.4.4.2',
+        detail: `
+            修复一些 bug.
+        `
+    },
+    {
         version: 'v3.4.4.1',
         detail: `
             修复 wp 命令的 Bug。
@@ -276,6 +282,12 @@ const langZh = [
 ];
 
 const langEn = [
+    {
+        version: 'v3.4.4.2',
+        detail: `
+            fix bug.
+        `
+    },
     {
         version: 'v3.4.4.1',
         detail: `
