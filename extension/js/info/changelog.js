@@ -1,5 +1,11 @@
 const langZh = [
     {
+        version: 'v3.4.4.3',
+        detail: `
+            修复 New Tab 不能 tab 获取焦点的问题.
+        `
+    },
+    {
         version: 'v3.4.4.2',
         detail: `
             修复一些 bug.
@@ -282,6 +288,12 @@ const langZh = [
 ];
 
 const langEn = [
+    {
+        version: 'v3.4.4.3',
+        detail: `
+            fix bug. 
+        `
+    },
     {
         version: 'v3.4.4.2',
         detail: `
