@@ -80,18 +80,18 @@
     "commands": {
         "_execute_browser_action": {
             "suggested_key": {
-                "windows": "Ctrl+Shift+K",
+                "windows": "Ctrl+Shift+L",
                 "mac": "Command+Shift+K",
-                "chromeos": "Ctrl+Shift+K",
-                "linux": "Ctrl+Shift+K"
+                "chromeos": "Ctrl+Shift+L",
+                "linux": "Ctrl+Shift+L"
             }
         },
         "open-in-content-page": {
             "suggested_key": {
-                "windows": "Ctrl+Shift+0",
-                "mac": "Command+Shift+0",
-                "chromeos": "Ctrl+Shift+0",
-                "linux": "Ctrl+Shift+0"
+                "windows": "Ctrl+Shift+O",
+                "mac": "Command+Shift+O",
+                "chromeos": "Ctrl+Shift+O",
+                "linux": "Ctrl+Shift+O"
             },
             "description": "__MSG_pageboxDesc__"
         }
