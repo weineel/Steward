@@ -83,18 +83,18 @@
     "commands": {
         "_execute_browser_action": {
             "suggested_key": {
-                "windows": "Ctrl+Shift+K",
+                "windows": "Ctrl+Alt+K",
                 "mac": "Command+Shift+K",
-                "chromeos": "Ctrl+Shift+K",
-                "linux": "Ctrl+Shift+K"
+                "chromeos": "Ctrl+Alt+K",
+                "linux": "Ctrl+Alt+K"
             }
         },
         "open-in-content-page": {
             "suggested_key": {
-                "windows": "Ctrl+Shift+0",
+                "windows": "Ctrl+Alt+0",
                 "mac": "Command+Shift+0",
-                "chromeos": "Ctrl+Shift+0",
-                "linux": "Ctrl+Shift+0"
+                "chromeos": "Ctrl+Alt+0",
+                "linux": "Ctrl+Alt+0"
             },
             "description": "__MSG_pageboxDesc__"
         }
