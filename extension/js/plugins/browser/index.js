@@ -24,7 +24,7 @@ import newtab from './newtab'
 import wallpaper from './wallpaper'
 import search from './search'
 import extensions from './extensions'
-import chrome from './chrome'
+import firefox from './firefox'
 import steward from './steward'
 import custom from './custom'
 import random from './random'
@@ -60,7 +60,7 @@ const pluginList = [
     wallpaper,
     search,
     extensions,
-    chrome,
+    firefox,
     steward,
     custom,
     random,
