@@ -561,11 +561,11 @@ function prepareBox() {
 
     $cmdbox.focus();
 
+    window.addEventListener('focus', () => {
+        $cmdbox.focus();
+    });
     // force focus in content page
     if (inContent) {
-        window.addEventListener('focus', () => {
-            $cmdbox.focus();
-        });
         $cmdbox.blur(function() {
             $cmdbox.focus();
         });
