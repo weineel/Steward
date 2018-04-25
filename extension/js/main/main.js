@@ -214,7 +214,7 @@ function defaultStage() {
 function handleEnterResult(result) {
     const delay4close = 1000;
 
-    if (result && result instanceof Promise) {
+    if (result && typeof result.then === 'function') {
         return result.then(data => {
             if (typeof data === 'string') {
                 if (data) {
