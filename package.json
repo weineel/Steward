@@ -10,7 +10,9 @@
     "watch": "webpack --watch --config config/webpack.steward.config.js",
     "watch:lite": "webpack --watch --config config/webpack.stewardlite.config.js",
     "prod": "bash build/build.sh",
+    "prod:ff": "bash build/build-ff.sh",
     "prod:lite": "bash build/build-lite.sh",
+    "prod:lite:ff": "bash build/build-lite-ff.sh",
     "build:minified": "cross-env NODE_ENV=production webpack --config config/webpack.steward.config.js",
     "build:minified:lite": "cross-env NODE_ENV=production webpack --config config/webpack.stewardlite.config.js",
     "cleaninstall": "rm -rf node_modules && npm i"

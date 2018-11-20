@@ -234,6 +234,7 @@ export default {
             const maxIndex = this.dataList.length - 1;
             let selectIndex = this.selectedIndex;
 
+            this.focus();
             if (direction === 'up') {
                 selectIndex = selectIndex - 1;
             } else {

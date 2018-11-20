@@ -1,6 +1,5 @@
 // browser plugins
 import bookmark from './browser/bookmark'
-import chrome from './browser/chrome'
 import del from './browser/del'
 import download from './browser/download'
 import extensions from './browser/extensions'
@@ -65,7 +64,6 @@ const pluginList = [
     wallpaper,
     search,
     extensions,
-    chrome,
     steward,
     custom,
     random,

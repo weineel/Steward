@@ -89,16 +89,6 @@
                 "linux": "Ctrl+Shift+L"
             }
         },
-        "open-in-content-page": {
-            "suggested_key": {
-                "windows": "Ctrl+Shift+O",
-                "mac": "Command+Shift+O",
-                "chromeos": "Ctrl+Shift+O",
-                "linux": "Ctrl+Shift+O"
-            },
-            "description": "__MSG_pageboxDesc__",
-            "global": true
-        },
         "pageboxShortcut_0": {
             "description": "__MSG_general_shortcuts_pageboxShortcut_0_cmd__"
         },
