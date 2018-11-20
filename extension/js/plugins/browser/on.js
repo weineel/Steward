@@ -10,7 +10,7 @@ const version = 2;
 const name = 'onExtension';
 const key = 'on';
 const type = 'keyword';
-const icon = chrome.extension.getURL('img/on.png');
+const icon = chrome.extension.getURL('iconfont/on.svg');
 const title = chrome.i18n.getMessage(`${name}_title`);
 const subtitle = chrome.i18n.getMessage(`${name}_subtitle`);
 const commands = [{
@@ -63,14 +63,15 @@ function onInput(query) {
 function onEnter(item) {
     if (item && item.id) {
         setEnabled(item.id, true);
-        this.refresh();
         window.slogs.push(`Enable: ${item.title}`);
+        window.stewardApp.refresh();
     }
 }
 
 export default {
     version,
     name: 'Enable Extension',
+    category: 'browser',
     icon,
     title,
     commands,

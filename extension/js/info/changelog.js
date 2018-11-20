@@ -1,14 +1,135 @@
 const langZh = [
     {
-        version: 'v3.4.4.3',
+        version: 'v3.5.7',
         detail: `
-            修复 New Tab 不能 tab 获取焦点的问题.
+            重构主流程，更新插件 api;<br>
+            添加查询 loading 状态提示;<br>
+            metakey + click/enter 在当前标签页打开链接;<br>
+            优化 tab 插件.
         `
     },
     {
-        version: 'v3.4.4.2',
+        version: 'v3.5.6',
         detail: `
-            修复一些 bug.
+            壁纸插件新增不再显示选项，点击将壁纸加入黑名单;<br>
+            修复一些 bug.<br>
+        `
+    },
+    {
+        version: 'v3.5.5',
+        detail: `
+            修复一些 bug;<br>
+        `
+    },
+    {
+        version: 'v3.5.4',
+        detail: `
+            优化 Bookmark 插件性能；<br>
+            将 jenkins / coin / times 插件转至 plugins 仓库，请使用 spm 安装；<br>
+            plugin api 增强；<br>
+            修复一些 bug;<br>
+        `
+    },
+    {
+        version: 'v3.5.3',
+        detail: `
+            新增 wsm 插件，wsm install / wsm uninstal 命令安装、卸载 website 配置；<br>
+            website 社区驱动，参考: http://bbs.oksteward.com/topic/5bc065860f590c684784a411<br>
+            优化页面模式的 outline 功能。
+        `
+    },
+    {
+        version: 'v3.5.2',
+        detail: `
+            新增 spm 插件，spm install / spm uninstal 命令安装、卸载插件；<br>
+            更新 plugin api。
+        `
+    },
+    {
+        version: 'v3.5.1',
+        detail: `
+            开放插件 api, 允许用户自行编写插件，在 设置 --> 高级 --> 插件编辑中使用；<br>
+            优化包大小；<br>
+            New Tab 底部按钮组件化配置。
+        `
+    },
+    {
+        version: 'v3.5',
+        detail: `
+            为 newtab 新增时钟/快捷方式组件，在 设置 --> 通用 --> NewTab 设置中选择使用；<br>
+            重构。
+        `
+    },
+    {
+        version: 'v3.4.13',
+        detail: `
+            website 分享优化，支持分享选中文字 ;<br>
+            website 分享根据使用排序.
+        `
+    },
+    {
+        version: 'v3.4.12',
+        detail: `
+            重新设计 Steward Lite New Tab 模式，请访问 lai.app;<br>
+            壁纸操作优化。
+        `
+    },
+    {
+        version: 'v3.4.11',
+        detail: `
+            websites url 匹配支持 minimatch;<br>
+            nt 命令 bug 修复;<br>
+            因 https 证书过期，移除新浪 short url 功能.
+        `
+    },
+    {
+        version: 'v3.4.10',
+        detail: `
+            websites 支持 vuepress 站点;<br>
+            文档链接更新;<br>
+            <em>coins </em> 支持缓存，<em>coin </em>支持选择交易所缓存.
+        `
+    },
+    {
+        version: 'v3.4.9',
+        detail: `
+            新增 coin market 插件，查询最新的数字货币价格，包括<em>coin</em> 以及 <em>coins</em>命令；<br>
+            一定程度上优化 dl 命令性能问题；<br>
+            新增繁体中文语言包。
+        `
+    },
+    {
+        version: 'v3.4.8',
+        detail: `
+            新增 pixabay 壁纸来源；<br>
+            更好的国际化支持，一些样式优化；<br>
+            移除 google 统计以提高性能。
+        `
+    },
+    {
+        version: 'v3.4.7',
+        detail: `
+            额外提供 10 个快捷键，以方便自定义命令快捷方式；<br>
+            yd 插件修复，以 google 翻译代替有道词典；<br>
+            页面模式的分享列表可以在选项 --> Advanced 里自定义。
+        `
+    },
+    {
+        version: 'v3.4.6',
+        detail: `
+            为网站自动配置 Websites 功能，默认开启；<br>
+            页面模式下提供当前页面的常用操作以及信息，以单引号 <em>'</em> 为 trigger;<br>
+            提供当前页面的二维码图片及短网址功能，以单引号 <em>'</em> 为 trigger，默认开启；<br>
+            Websites 生成社会化分享链接，以 <em>@</em> 为 trigger, 默认开启;<br>
+            通过 <em>wd</em> 命令提供单词小卡片常用选项。
+        `
+    },
+    {
+        version: 'v3.4.5',
+        detail: `
+            通过 css selector 给特定页面添加锚点，快速定位;<br>
+            主题可以使用 color-picker 编辑；<br> 
+            其它一些优化以及问题修复。
         `
     },
     {
@@ -289,15 +410,134 @@ const langZh = [
 
 const langEn = [
     {
-        version: 'v3.4.4.3',
+        version: 'v3.5.7',
         detail: `
-            fix bug. 
+            Refactor the main process, update the plugin api;<br>
+            Add query loading status for plugins;<br>
+            Metakey[Command / Windows] + click/enter opens the link in the current tab;<br>
+            Optimize the tab plugin.
         `
     },
     {
-        version: 'v3.4.4.2',
+        version: 'v3.5.6',
         detail: `
-            fix bug.
+            Add blacklist option for wallpaer plugin, click it to add the wallpaper to the blacklist;<br>
+            Fix some bugs.<br> 
+        `
+    },
+    {
+        version: 'v3.5.5',
+        detail: `
+            Fix some bugs;<br>
+        `
+    },
+    {
+        version: 'v3.5.4',
+        detail: `
+            Optimize Bookmark plugin performance;<br>
+            Move the jenkins / coin / times plugin to the plugins repository, use spm to install;<br>
+            Plugin api enhancement;<br>
+            Fix some bugs;<br>
+        `
+    },
+    {
+        version: 'v3.5.3',
+        detail: `
+            Added wsm plugin, wsm install / wsm uninstal command to install and uninstall website configuration;<br>
+            Website changed to community driven, Reference: http://bbs.oksteward.com/topic/5bc065860f590c684784a411<br>
+            Optimize the outline function of the page mode.
+        `
+    },
+    {
+        version: 'v3.5.2',
+        detail: `
+            Add spm plugin, spm install / spm uninstal command to install and uninstall plugins;<br>
+            Update the plugin api. 
+        `
+    },
+    {
+        version: 'v3.5.1',
+        detail: `
+            Open plugin api, allows users to write their own plugins -- Settings --> Advanced --> Plugin Editing;<br>
+            Optimize package size;<br>
+            New Tab bottom button componentized configuration. 
+        `
+    },
+    {
+        version: 'v3.5',
+        detail: `
+            Add a clock/shortcut component for newtab and you can select them in Settings --> General --> NewTab Settings;<br>
+            Componentized refactoring. 
+        `
+    },
+    {
+        version: 'v3.4.13',
+        detail: `
+            Website share optimization, support sharing selected text; <br>
+            Website share sorted by usage. 
+        `
+    },
+    {
+        version: 'v3.4.12',
+        detail: `
+            Redesign newtab mode of Steward Lite, please visit website https://lai.app;<br>
+            Optimize the operations of wallpaper.
+        `
+    },
+    {
+        version: 'v3.4.11',
+        detail: `
+            websites url support minimatch;<br>
+            fix bug of nt command;<br>
+            remove short url feature.
+        `
+    },
+    {
+        version: 'v3.4.10',
+        detail: `
+            Websites support vuepress sites;<br>
+            Document link update;<br>
+            <em>coins </em> supports caching, <em>coin </em> supports selecting exchange caches.
+        `
+    },
+    {
+        version: 'v3.4.9',
+        detail: `
+            Add the coin market plugin to check the latest digital currency prices, including the <em>coin</em> and <em>coins</em> commands;<br>
+            Optimize <em>dl</em> command performance issues；<br>
+            Add Traditional Chinese Language Pack。
+        `
+    },
+    {
+        version: 'v3.4.8',
+        detail: `
+            Add pixabay wallpaper source；<br>
+            Better international support, some style optimization；<br>
+            Remove google stats to improve performance。
+        `
+    },
+    {
+        version: 'v3.4.7',
+        detail: `
+            Provides 10 additional shortcuts for customizing command shortcuts;<br>
+            The sharing links of page mode can be customized in Options --> Advanced。
+        `
+    },
+    {
+        version: 'v3.4.6',
+        detail: `
+            Automatically configure the Websites feature, which is turned on by default;<br>
+            Page mode provides common operations and information for the current page, with <em>'</em> being a trigger;<br>
+            Provide qr-code picture and short URL of the current page, use <em>'</em> as trigger, enabled by default;<br>
+            Generates social sharing links, with <em>@</em> being a trigger, which are turned on by default.
+        `
+    },
+    {
+        version: 'v3.4.5',
+        detail: `
+            Add anchor points to specific pages via the css selector for quick positioning;<br>
+            Themes can be edited using color-picker;<br>
+            Other optimizations and problem fixes.
         `
     },
     {

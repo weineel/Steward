@@ -77,6 +77,39 @@ function getDefaultResult(command) {
     }];
 }
 
+const loadingIcon = chrome.extension.getURL('iconfont/loading.svg');
+
+function getLoadingResult(command) {
+    let theCommand;
+
+    if (!command) {
+        theCommand = window.stewardApp.getCurrentCommand();
+    }
+
+    if (theCommand) {
+        return [{
+            icon: theCommand.icon,
+            title: theCommand.title,
+            desc: 'Loading...',
+            isDefault: true
+        }];
+    } else {
+        return [{
+            icon: loadingIcon,
+            title: 'Loading....',
+            isDefault: true
+        }];
+    }
+}
+
+function getEmptyResult(command, msg) {
+    return [{
+        isDefault: true,
+        icon: command.icon,
+        title: msg || 'No query results...'
+    }];
+}
+
 function copyToClipboard(text, showMsg) {
     document.addEventListener('copy', event => {
         event.preventDefault();
@@ -129,7 +162,7 @@ const wrapWithMaxNumIfNeeded = (field,
     return ret;
 }
 
-const batchExecutionIfNeeded = (predicate, [exec4batch, exec], [list, item],
+const batchExecutionIfNeeded = (predicate, [exec4batch, exec], [list, item], keyStatus,
     maxOperandsNum = window.stewardCache.config.general.maxOperandsNum) => {
     const results = [];
 
@@ -138,10 +171,28 @@ const batchExecutionIfNeeded = (predicate, [exec4batch, exec], [list, item],
 
         results.push(list.slice(0, num).forEach(exec4batch));
     } else {
-        results.push(exec(item));
+        results.push(exec(item, keyStatus));
     }
 
     return Promise.all(results);
+}
+
+const createTab = (item, keyStatus = {}) => {
+    const { mode, inContent } = window.stewardApp;
+
+    if (mode === 'popup' && !inContent) {
+        chrome.tabs.create({ url: item.url });
+    } else {
+        if (keyStatus.metaKey) {
+            chrome.tabs.getCurrent(tab => {
+                chrome.tabs.update(tab.id, {
+                    url: item.url
+                });
+            });
+        } else {
+            chrome.tabs.create({ url: item.url });
+        }
+    }
 }
 
 const tabCreateExecs = [
@@ -149,8 +200,9 @@ const tabCreateExecs = [
         chrome.tabs.create({ url: item.url, active: false });
         window.slogs.push(`open ${item.url}`);
     },
-    item => {
-        chrome.tabs.create({ url: item.url });
+    (item, keyStatus = {}) => {
+        createTab(item, keyStatus);
+        
         window.slogs.push(`open ${item.url}`);
     }
 ];
@@ -163,16 +215,18 @@ function getLang() {
     }
 }
 
-function getDocumentURL(name) {
+function getDocumentURL(name, category) {
     const lang = getLang();
-    const baseUrl = `http://oksteward.com/steward-document-${lang}/plugins`;
-    const exts = ['wordcard'];
+    let baseUrl;
+    const fixedName = name.replace(/\s/, '-');
 
-    if (exts.indexOf(name) === -1) {
-        return `${baseUrl}/browser/${name}.html`;
+    if (lang === 'en') {
+        baseUrl = `http://oksteward.com/steward-documents/plugins/${category}`;
     } else {
-        return `${baseUrl}/browser/extension/${name}.html`;
+        baseUrl = `http://oksteward.com/steward-documents/zh/plugins/${category}`;
     }
+
+    return `${baseUrl}/${fixedName}.html`;
 }
 
 function getBytesInUse(key) {
@@ -237,13 +291,29 @@ const getData = field => () => {
     });
 }
 
+function getTplMsg(tplKey, data) {
+    return simTemplate(chrome.i18n.getMessage(tplKey), data);
+}
+
+function getTextMsg(tplKey, textKey) {
+    const data = {
+        text: chrome.i18n.getMessage(textKey)
+    };
+
+    return getTplMsg(tplKey, data);
+}
+
 export default {
     matchText,
     isMac,
     guid,
     simpleCommand,
+    getTplMsg,
+    getTextMsg,
     genCommands,
     getDefaultResult,
+    getLoadingResult,
+    getEmptyResult,
     copyToClipboard,
     getMatches,
     getParameterByName,
@@ -256,5 +326,7 @@ export default {
     isStorageSafe,
     shouldSupportMe,
     simTemplate,
-    getData
+    getData,
+    createTab,
+    toast: Toast
 };

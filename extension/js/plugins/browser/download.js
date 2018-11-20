@@ -9,7 +9,7 @@ const version = 2;
 const name = 'download';
 const key = 'dl';
 const type = 'keyword';
-const icon = chrome.extension.getURL('img/download.png');
+const icon = chrome.extension.getURL('iconfont/download.svg');
 const title = chrome.i18n.getMessage(`${name}_title`);
 const subtitle = chrome.i18n.getMessage(`${name}_subtitle`);
 const commands = [{
@@ -21,15 +21,22 @@ const commands = [{
     editable: true
 }];
 
-function searchDownload(query, callback) {
-    chrome.downloads.search({
-      query: [query],
-      orderBy: ['-endTime']
-    }, function (data) {
-        const downloadList = data || [];
+let timer = 0;
+const QUERY_DELAY = 200;
 
-        callback(downloadList);
-    });
+function searchDownload(query, callback) {
+    clearTimeout(timer);
+
+    timer = setTimeout(function() {
+        chrome.downloads.search({
+            query: query ? [query] : [],
+            limit: 10
+          }, function (data) {
+              const downloadList = data || [];
+
+              callback(downloadList);
+          });
+    }, QUERY_DELAY);
 }
 
 const rFilename = /(?!\/)[^\/]+\.?(\w+)?$/;
@@ -81,6 +88,7 @@ function onEnter(item) {
 export default {
     version,
     name: 'Downloads',
+    category: 'browser',
     icon,
     title,
     commands,

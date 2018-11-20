@@ -1,39 +1,66 @@
-/*global _gaq*/
 import $ from 'jquery'
 import CONST from '../constant'
 import * as api from '../api/index'
 import * as date from '../utils/date'
 import storage from '../utils/storage'
 import Toast from 'toastr'
-import { saveWallpaperLink } from '../helper/wallpaper'
+import { saveWallpaperLink, shouldShow } from '../helper/wallpaper'
 import browser from 'webextension-polyfill'
+import 'jquery.waitforimages'
 
 const $body = $('body');
 
 let curUrl = '';
-let intervalTimer = 0;
-let $saveBtn;
+let state;
+let timer = 0;
 
-function updateWallpaper(url, save, isNew) {
+function updateSaveStatus(action) {
+    const conf = saveActionConf[action];
+
+    saveWallpaperLink(curUrl, conf.action).then(() => {
+        Toast.success(conf.msg);
+        let isNew;
+
+        if (action === 'save') {
+            window.stewardApp.emit('wallpaper:save');
+            isNew = false;
+        } else {
+            window.stewardApp.emit('wallpaper:remove');
+            isNew = true;
+        }
+
+        window.stewardApp.emit('wallpaper:refreshed', isNew);
+    }).catch(msg => {
+        Toast.warning(msg);
+    });
+}
+
+export function save() {
+    updateSaveStatus('save');
+}
+
+export function remove() {
+    updateSaveStatus('remove');
+}
+
+export function update(url, toSave, isNew) {
     if (!url) {
         return;
     }
 
-    if (save) {
+    if (toSave) {
         window.localStorage.setItem(CONST.STORAGE.WALLPAPER, url);
-    }
-
-    if (isNew) {
-        $saveBtn.show();
-    } else {
-        $saveBtn.hide();
     }
 
     curUrl = url;
     $('html').css({
         '--app-newtab-background-image': `url(${url})`
     });
-    $body.trigger('wallpaper:refreshed');
+    window.stewardApp.emit('wallpaper:refreshed', isNew);
+    $body.waitForImages(true).done(function() {
+        Toast.clear();
+        state.loading = false;
+    });
 }
 
 
@@ -82,6 +109,11 @@ const sourcesInfo = {
         api: () => api.desktoppr.getRandom(),
         handle: result => result.response.image.url,
         weight: 3
+    },
+    pixabay: {
+        api: () => api.pixabay.getPageList(),
+        handle: result => getRandomOne(result.hits).largeImageURL,
+        weight: 3
     }
 };
 
@@ -125,11 +157,17 @@ function recordSource(source) {
     window.localStorage.setItem('wallpaper_source', source);
 }
 
-export function refreshWallpaper(today) {
+export function refresh(today, silent) {
     const method = today ? 'today' : 'rand';
     const server = getSources(method);
 
-    Promise.all(server.tasks.map(task => task())).then(sources => {
+    if (!silent) {
+        Toast.info(chrome.i18n.getMessage('wallpaper_update'), { timeOut: 20000 });
+    }
+
+    state.loading = true;
+
+    return Promise.all(server.tasks.map(task => task())).then(sources => {
         // `result` will never be `favorites`.
         const [result, favorites] = sources;
         let type = server.name;
@@ -149,38 +187,46 @@ export function refreshWallpaper(today) {
             isNew = favorites.indexOf(wp) === -1;
         }
 
-        recordSource(type);
-        updateWallpaper(wp, true, isNew);
+        if (!/\.html$/.test(wp)) {
+            shouldShow(wp).then(() => {
+                recordSource(type);
+
+                return update(wp, true, isNew);
+            }).catch(() => {
+                refresh(false, true);
+            });
+        } else {
+            state.loading = false;
+            Toast.clear();
+            Toast.warning('Picture error, please refresh again.');
+        }
     }).catch(resp => {
         console.log(resp);
+        state.loading = false;
+        Toast.clear();
     });
 }
 
+const saveActionConf = {
+    save: {
+        action: 'save',
+        msg: chrome.i18n.getMessage('wallpaper_save_done')
+    },
+
+    remove: {
+        action: 'remove',
+        msg: chrome.i18n.getMessage('wallpaper_remove_done')
+    }
+};
+
 function bindEvents() {
-    $('#j-refresh-wp').on('click', function() {
-        refreshWallpaper();
-        _gaq.push(['_trackEvent', 'wallpaper', 'click', 'refresh']);
-    });
+    document.addEventListener('stewardReady', event => {
+        const app = event.detail.app;
 
-    $body.on('wallpaper:update', function(event, url) {
-        updateWallpaper(url, true);
-    });
-
-    $saveBtn.on('click', function() {
-        saveWallpaperLink(curUrl).then(() => {
-            Toast.success('save successfully');
-            $saveBtn.hide();
-        }).catch(msg => {
-            Toast.warning(msg);
+        app.on('beforeleave', () => {
+            console.log('beforeleave');
+            clearInterval(timer);
         });
-        _gaq.push(['_trackEvent', 'wallpaper', 'click', 'save']);
-    });
-
-    $(document).on('dblclick', function(event) {
-        if (event.target.tagName === 'BODY') {
-            clearInterval(intervalTimer);
-            Toast.success('The automatic refresh of the wallpaper has been disabled');
-        }
     });
 }
 
@@ -190,32 +236,33 @@ export function init() {
     const defaultWallpaper = window.localStorage.getItem(CONST.STORAGE.WALLPAPER);
     const enableRandomWallpaper = window.stewardCache.config.general.enableRandomWallpaper;
 
-    $saveBtn = $('#j-save-wplink');
+    state = window.stewardCache.wallpaper = {
+        loading: false
+    };
 
     window.localStorage.setItem(CONST.STORAGE.LASTDATE, date.format());
 
     if (!defaultWallpaper) {
-        refreshWallpaper();
+        refresh();
     } else {
         if (date.isNewDate(new Date(), lastDate) && enableRandomWallpaper) {
-            refreshWallpaper(true);
+            refresh(true);
         } else {
             browser.storage.sync.get(CONST.STORAGE.WALLPAPERS).then(resp => {
                 const list = resp[CONST.STORAGE.WALLPAPERS] || [];
                 const isNew = list.indexOf(defaultWallpaper) === -1;
 
-                updateWallpaper(defaultWallpaper, false, isNew);
+                update(defaultWallpaper, false, isNew);
             });
         }
     }
 
-    bindEvents();
-
     api.picsum.refreshPicsumList();
+    bindEvents();
 
     // set interval
     if (enableRandomWallpaper) {
-        intervalTimer = setInterval(refreshWallpaper, CONST.NUMBER.WALLPAPER_INTERVAL);
+        timer = setInterval(refresh, CONST.NUMBER.WALLPAPER_INTERVAL);
     } else {
         console.log('disable random');
     }

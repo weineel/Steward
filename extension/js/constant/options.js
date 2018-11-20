@@ -34,4 +34,22 @@ export const WALLPAPER_SOURCES = [{
     label: 'Desktoppr',
     value: 'desktoppr',
     tips: 'desktoppr.co'
+}, {
+    label: 'Pixabay',
+    value: 'pixabay',
+    tips: 'pixabay.com'
+}];
+
+export const NEWTAB_WIDGETS = [{
+    label: 'Clock',
+    value: 'clock',
+    tips: 'Clock'
+}, {
+    label: 'Shortcuts',
+    value: 'shortcuts',
+    tips: 'Shortcuts'
+}, {
+    label: 'Bottom Buttons',
+    value: 'wpbtns',
+    tips: 'Bottom Buttons'
 }];

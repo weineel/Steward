@@ -1,66 +1,85 @@
-import './popup.scss'
-import extension from '../../js/main/main'
+import { initConfig, globalData, globalApi, clearToasts } from '../../js/main/main'
 import keyboardJS from 'keyboardjs'
 import { MODE } from '../../js/constant/base'
 import { createWebsites } from '../../js/helper/websites'
+import Vue from 'vue';
+import App from './App.vue';
+Vue.config.productionTip = false;
 
-if (window.parent === window) {
-    extension(MODE.POPUP);
+function initApp(mode, inContent, meta) {
+    globalData({
+        mode,
+        data: { page: meta },
+        inContent
+    });
+    return initConfig(mode, inContent).then(config => {
+        globalData({ config });
+
+        const app = new Vue({
+            el: '#app',
+            data: {
+                config
+            },
+            components: { App },
+            template: '<App />'
+        });
+
+        globalApi(app);
+
+        return config;
+    });
 }
 
-let box;
+if (window.parent === window) {
+    initApp(MODE.POPUP, false);
+}
 
 window.addEventListener('message', function(event) {
     if (event.data.ext_from === 'content') {
         if (event.data.action === 'show') {
-            changeBoxStatus(false);
+            changeBoxStatus(false, event.data.cmd);
         } else {
-            createWebsites(event.source, event.data.host, event.data.autoMatchingSites).then(sites => {
-                window.matchedSite = sites[0];
-                initForContentPage(event.source, event.data.lazy, event.data.host);
+            const { host, meta, general } = event.data;
+
+            createWebsites(event.source, host, meta, general).then(site => {
+                if (site) {
+                    window.matchedSite = site;
+                }
+                initForContentPage(event.source, event.data.lazy, event.data.host, meta);
             });
         }
     }
 });
 
-function changeBoxStatus(disabled) {
-    if (box) {
-        box.ipt.attr('readonly', disabled);
-
-        if (disabled) {
-            box.empty(true);
-            box.ipt.blur();
-        } else {
-            box.ipt.focus();
-        }
-    }
+function changeBoxStatus(disabled, cmd) {
+    window.stewardApp.emit('cmdbox:status', disabled, cmd);
 }
 
 function closeBox() {
     changeBoxStatus(true);
     requestAnimationFrame(() => {
+        clearToasts();
         window.parentWindow.postMessage({
             action: 'closeBox'
         }, '*');
     });
 }
 
-function handleAction(event, obj) {
+function handleAction(obj) {
     window.parentWindow.postMessage(obj, '*');
 }
 
-function initForContentPage(parentWindow, lazy, parentHost) {
+function initForContentPage(parentWindow, lazy, parentHost, meta) {
     document.documentElement.className += ' content-page';
     window.parentWindow = parentWindow;
     window.parentHost = parentHost;
 
-    extension(MODE.POPUP, true).then(cmdbox => {
-        box = cmdbox;
+    initApp(MODE.POPUP, true, meta).then(() => {
         // if lazy, inputbox should get the focus when init
         changeBoxStatus(!lazy);
 
-        box.bind('shouldCloseBox', closeBox);
-        box.bind('action', handleAction);
+        window.stewardApp.on('shouldCloseBox', closeBox);
+        window.stewardApp.on('action', handleAction);
         keyboardJS.bind('esc', closeBox);
 
         parentWindow.postMessage({

@@ -1,5 +1,4 @@
-/*global _gaq*/
-import { plugins as pluginList } from '../../../js/plugins/browser'
+import { plugins as pluginList } from '../../../js/plugins'
 import util from '../../../js/common/util'
 import CONST from '../../../js/constant'
 import _ from 'underscore'
@@ -11,6 +10,7 @@ const pluginModules = _.sortBy(pluginList.filter(item => item.commands), 'name')
     const ret = {
         name,
         version: plugin.version,
+        category: plugin.category,
         commands,
         title,
         icon,
@@ -65,12 +65,11 @@ export default {
         },
 
         getDocumentURL: function(plugin) {
-            return util.getDocumentURL(plugin.name);
+            return util.getDocumentURL(plugin.name, plugin.category);
         },
 
         handlePluginClick: function(plugin) {
             this.currentPlugin = plugin;
-            _gaq.push(['_trackEvent', 'options_plugins', 'click', plugin.name]);
         },
 
         handlePluginAuth(plugin) {
@@ -109,8 +108,6 @@ export default {
                 this.$message.warning(`trigger conflict: ${checkInfo.map(tipsFn).join('; ')}`);
             } else {
                 this.saveConfig();
-
-                _gaq.push(['_trackEvent', 'options_plugins', 'save', this.currentPlugin.name]);
             }
         }
     }

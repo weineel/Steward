@@ -29,26 +29,54 @@
 
     initTheme('newtab');
 
+
+    const updateClass = action => cls => {
+        let clsArr = document.documentElement.className.trim().split(' ').filter(item => Boolean(item));
+
+        if (clsArr.indexOf(cls) === -1) {
+            if (action === 'add') {
+                clsArr.push(cls);
+            } else {
+                return;
+            }
+        } else {
+            if (action === 'remove') {
+                clsArr = clsArr.filter(item => item !== cls);
+            } else {
+                return;
+            }
+        }
+
+        document.documentElement.className = clsArr.join(' ');
+    }
+
+    const addClass = updateClass('add');
+    const removeClass = updateClass('remove');
+
     if (window.localStorage.visibleOnlyFocued) {
+        const className = 'box-invisible';
+
         if (!document.hasFocus()) {
-            addClass();
+            addClass(className);
         }
 
-        function removeClass() {
-            document.documentElement.className = '';
-            document.querySelector('#cmdbox').focus();
+        function removeClassAsync(cls) {
+            requestAnimationFrame(function() {
+                removeClass(cls);
+                document.querySelector('#cmdbox').focus();
+            });
         }
 
-        function addClass() {
-            document.documentElement.className = 'box-invisible';
-        }
-
-        window.addEventListener('focus', removeClass, false);
-        window.addEventListener('blur', addClass, false);
+        window.addEventListener('focus', function() {
+            removeClassAsync(className);
+        }, false);
+        window.addEventListener('blur', function() {
+            addClass(className);
+        }, false);
     }
 
     if (window.localStorage.newTabUseFilter) {
-        document.documentElement.className += ' use-filter';
+        addClass('use-filter');
     }
 
     if (window.localStorage.titleType === 'random') {
@@ -71,10 +99,11 @@
     const optionalSize = ['normal', 'large'];
 
     if (optionalSize.indexOf(boxSize) !== -1) {
-        document.documentElement.className += ` size-${boxSize}`
+        addClass(`size-${boxSize}`);
     }
 
     window.addEventListener('beforeunload', function () {
+        window.stewardApp && window.stewardApp.emit('beforeleave');
         document.querySelector('#main').style.display = 'none';
     });
 })();

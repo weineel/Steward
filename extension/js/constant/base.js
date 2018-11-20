@@ -23,10 +23,22 @@ export const MODE = {
 };
 
 export const EXTENSION = {
-    ALFRED: 'alfred',
+    STEWARDLITE: 'stewardlite',
     STEWARD: 'steward'
 };
 
-export const alfredTabs = ['Alfred', 'General', 'Plugins', 'Workflows', 'Websites', 'Advanced', 'Help', 'Update'];
+export const PLUGIN_STATUS = {
+    NOTINSTALL: 0,
+    NEWVESION: 1,
+    INSTALLED: 2
+};
+
+export const WEBSITE_STATUS = {
+    NOTINSTALL: 0,
+    NEWVESION: 1,
+    INSTALLED: 2
+};
+
+export const stewardLiteTabs = ['Steward', 'General', 'Plugins', 'Workflows', 'Websites', 'Wallpapers', 'Appearance', 'Advanced', 'Help', 'Update'];
 
 export const stewardTabs = ['Steward', 'General', 'Plugins', 'Workflows', 'Websites', 'Wallpapers', 'Appearance', 'Advanced', 'Help', 'Update'];

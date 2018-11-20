@@ -11,7 +11,7 @@ const version = 2;
 const name = 'viewExtension';
 const key = 'ext';
 const type = 'keyword';
-const icon = chrome.extension.getURL('img/viewext.png');
+const icon = chrome.extension.getURL('iconfont/viewext.svg');
 const title = chrome.i18n.getMessage(`${name}_title`);
 const subtitle = chrome.i18n.getMessage(`${name}_subtitle`);
 const commands = [{
@@ -23,7 +23,7 @@ const commands = [{
     shiftKey: true,
     editable: true
 }];
-const extType = EXT_TYPE === 'alfred' ? 'Browser Alfred' : 'Steward';
+const extType = EXT_TYPE === 'stewardlite' ? 'Steward Lite' : 'Steward';
 
 function getExtensions(query, callback) {
     chrome.management.getAll(function (extList) {
@@ -75,21 +75,18 @@ function onInput(query, command) {
     }
 }
 
-function onEnter({ id, homepage }, command, query, shiftKey) {
-    if (shiftKey && homepage) {
-        chrome.tabs.create({
-            url: homepage
-        });
+function onEnter({ id, homepage }, command, query, keyStatus) {
+    if (keyStatus.shiftKey && homepage) {
+        util.createTab({ url: homepage }, keyStatus);
     } else {
-        chrome.tabs.create({
-            url: `chrome://extensions/?id=${id}`
-        });
+        util.createTab({ url: `chrome://extensions/?id=${id}` }, keyStatus);
     }
 }
 
 export default {
     version,
     name: 'View Extension',
+    category: 'browser',
     icon,
     title,
     commands,

@@ -9,7 +9,7 @@ import Toast from 'toastr'
 import _ from 'underscore'
 import browser from 'webextension-polyfill'
 
-const version = 6;
+const version = 7;
 const name = 'tabs';
 const keys = [
     { key: 'tab' },
@@ -18,19 +18,38 @@ const keys = [
     { key: 'tabp', allowBatch: true }
 ];
 const type = 'keyword';
-const icon = browser.extension.getURL('img/tab.png');
-const title = browser.i18n.getMessage(`${name}_title`);
+const icon = chrome.extension.getURL('iconfont/tab.svg');
+const title = chrome.i18n.getMessage(`${name}_title`);
 const commands = util.genCommands(name, icon, keys, type);
 
-function getAllTabs(query) {
-    return browser.tabs.query({
-        currentWindow: true
-    }).then(tabs => {
-        const tabList = tabs.filter(function (tab) {
-            return util.matchText(query, `${tab.title}${tab.url}`);
-        });
+function getAllTabs(query, callback) {
+    chrome.windows.getAll({ populate: true }, function (wins) {
+        if (wins.length) {
+            let curWin;
 
-        return tabList;
+            curWin = wins.find(win => win.focused);
+
+            function getTabs() {
+                const tabList = curWin.tabs.filter(function (tab) {
+                    return util.matchText(query, `${tab.title}${tab.url}`);
+                });
+
+                callback(tabList);
+            }
+
+            if (!curWin) {
+                // popup mode
+                chrome.windows.getLastFocused({ populate: true }, result => {
+                    curWin = result;
+
+                    getTabs();
+                })
+            } else {
+                getTabs();
+            }
+        } else {
+            callback([]);
+        }
     });
 }
 
@@ -111,7 +130,7 @@ function moveTab(tabId, query) {
     }
 }
 
-function onEnter(item, {key, orkey}, query, shiftKey, list) {
+function onEnter(item, {key, orkey}, query, { shiftKey }, list) {
     if (orkey === 'tab') {
         updateTab(item.id, {
             active: true
@@ -162,6 +181,7 @@ function updateTab(id, updateProperties) {
 export default {
     version,
     name: 'Tabs',
+    category: 'browser',
     icon,
     title,
     commands,
